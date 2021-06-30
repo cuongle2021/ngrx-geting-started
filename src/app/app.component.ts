@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { select, Store } from '@ngrx/store';
-import { BooksService } from './services/books.service';
-import { addBook, removeBook, retrievedBookList } from './state/books.actions';
-import { selectBookCollection, selectBooks } from './state/books.selectors';
+import { addBook, loadBooks, removeBook } from './book-state/+state/book.actions';
+import { getAllBooks, getBookCollection } from './book-state/+state/book.selectors';
 
 @Component({
   selector: 'app-root',
@@ -10,8 +9,8 @@ import { selectBookCollection, selectBooks } from './state/books.selectors';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  books$ = this.store.pipe(select(selectBooks));
-  bookCollection$ = this.store.pipe(select(selectBookCollection));
+  books$ = this.store.pipe(select(getAllBooks));
+  bookCollection$ = this.store.pipe(select(getBookCollection));
 
   onAdd(bookId) {
     this.store.dispatch(addBook({ bookId }));
@@ -22,13 +21,10 @@ export class AppComponent {
   }
 
   constructor(
-    private booksService: BooksService,
     private store: Store
   ) {}
 
   ngOnInit() {
-    this.booksService
-      .getBooks()
-      .subscribe((Book) => this.store.dispatch(retrievedBookList({ Book })));
+    this.store.dispatch(loadBooks());
   }
 }

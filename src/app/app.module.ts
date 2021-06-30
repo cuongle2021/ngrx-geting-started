@@ -14,6 +14,9 @@ import { environment } from '../environments/environment';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { BooksEffects } from './state/books.effects';
+import { reducers, metaReducers } from './reducers';
+import { BookStateModule } from './book-state/book-state.module';
+import { CollectionStateModule } from './collection-state/collection-state.module';
 
 @NgModule({
   declarations: [
@@ -25,11 +28,11 @@ import { BooksEffects } from './state/books.effects';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    StoreModule.forRoot({ books: booksReducer, collection: collectionReducer }),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    StoreModule.forRoot(reducers, { metaReducers }),
+    !environment.production ? StoreDevtoolsModule.instrument() : [],
     EffectsModule.forRoot([]),
-    StoreRouterConnectingModule.forRoot(),
-    EffectsModule.forFeature([BooksEffects]),
+    BookStateModule,
+    CollectionStateModule
   ],
   providers: [],
   bootstrap: [AppComponent]
